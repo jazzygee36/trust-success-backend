@@ -1,54 +1,76 @@
-import { IsEmail, IsString, IsNotEmpty } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  IsNotEmpty,
+  IsDateString,
+  MinLength,
+  IsNumber,
+} from 'class-validator';
+
 export class CreateUserDto {
   @IsNotEmpty()
-  firstName: string;
+  @IsString()
+  firstName!: string;
 
   @IsNotEmpty()
-  lastName: string;
+  @IsString()
+  lastName!: string;
 
   @IsNotEmpty()
-  username: string;
+  @IsString()
+  username!: string;
 
   @IsNotEmpty()
-  gender: string;
+  @IsString()
+  gender!: string;
 
   @IsNotEmpty()
-  dob: string;
+  // @IsDateString() 
+  dob!: string;
 
   @IsNotEmpty()
-  occupation: string;
+  @IsString()
+  occupation!: string;
 
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsNotEmpty()
-  country: string;
+  @IsString()
+  country!: string;
 
   @IsNotEmpty()
-  state: string;
+  @IsString()
+  state!: string;
 
   @IsNotEmpty()
-  city: string;
+  @IsString()
+  city!: string;
 
   @IsNotEmpty()
-  zipCode: string;
+
+zipCode!: string;
 
   @IsNotEmpty()
-  address: string;
+  @IsString()
+  address!: string;
 
   @IsNotEmpty()
-  phoneNumber: string;
+  @IsString()
+  phoneNumber!: string;
 
   @IsNotEmpty()
-  acctType: string;
+  @IsString()
+  acctType!: string;
 
   @IsNotEmpty()
-  acctPin: string;
+  @IsString()
+  acctPin!: string;
 
   @IsNotEmpty()
-  password: string;
+  @MinLength(6)
+  password!: string;
 
-  @IsNotEmpty()
-  confirmPassword: string;
+
 }
