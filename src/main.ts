@@ -15,8 +15,8 @@ export default async function handler(
 
     // Dynamically set allowed origins based on environment
     const allowedOrigins = [
-      'http://localhost:5173/', // Development frontend URL
-      'https://trustwalletbanking.netlify.app/', // Production frontend URL
+      'http://localhost:5173', // Development frontend URL
+      'https://trustwalletbanking.netlify.app', // Production frontend URL
     ];
 
     app.enableCors({
