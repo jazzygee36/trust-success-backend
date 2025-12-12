@@ -12,6 +12,8 @@ async function bootstrap() {
     origin: [
       'https://trustsuccessfinances.com',
       'https://www.trustsuccessfinances.com',
+      'https://finance-dashboard-eta-six.vercel.app',
+      'https://www.finance-dashboard-eta-six.vercel.app',
       'http://localhost:5173',
     ],
 
