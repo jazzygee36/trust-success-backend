@@ -119,7 +119,7 @@ export class UserService {
 
     const statement = new this.statementModel({
       ...createDto,
-      userId: new Types.ObjectId(userId), // convert string to ObjectId
+      userId: new Types.ObjectId(userId), // link to userId
     });
 
     const savedStatement = await statement.save();
@@ -130,26 +130,45 @@ export class UserService {
     };
   }
 
-  // GET all statements for a specific user
-  async getStatementsByUserId(userId: string): Promise<UserStatement[]> {
+  // Get all statements for a specific user (with optional pagination)
+  async getStatementsByUserId(
+    userId: string,
+    page = 1,
+    limit = 50,
+  ): Promise<UserStatement[]> {
     if (!userId || !Types.ObjectId.isValid(userId)) {
       throw new BadRequestException('Invalid userId');
     }
 
+    const skip = (page - 1) * limit;
+
     return this.statementModel
-      .find({ userId: new Types.ObjectId(userId) }) // convert string to ObjectId
+      .find({ userId: new Types.ObjectId(userId) })
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean() // memory efficient
       .exec();
   }
 
-  // UPDATE a statement (only if it belongs to the user)
+  // Update a statement, only if it belongs to the user
   async updateStatement(
-    id: string,
+    statementId: string,
     userId: string,
     updateDto: Partial<CreateUserStatementDto>,
   ): Promise<UserStatement> {
+    if (
+      !Types.ObjectId.isValid(statementId) ||
+      !Types.ObjectId.isValid(userId)
+    ) {
+      throw new BadRequestException('Invalid ID');
+    }
+
     const statement = await this.statementModel.findOneAndUpdate(
-      { _id: id, userId },
+      {
+        _id: new Types.ObjectId(statementId),
+        userId: new Types.ObjectId(userId),
+      },
       updateDto,
       { new: true },
     );

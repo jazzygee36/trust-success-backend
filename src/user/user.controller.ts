@@ -47,26 +47,34 @@ export class UserController {
   }
 
   @Post(':userId/create-statement')
-  async create(
+  async createStatement(
     @Param('userId') userId: string,
     @Body() dto: CreateUserStatementDto,
   ) {
-    return this.statementService.createStatement(userId, dto);
+    return this.userService.createStatement(userId, dto);
   }
 
-  // GET ALL
+  // Get all statements for a user (optional pagination)
   @Get(':userId/statements')
-  async getByUserId(@Param('userId') userId: string) {
-    return this.statementService.getStatementsByUserId(userId);
+  async getStatements(
+    @Param('userId') userId: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.userService.getStatementsByUserId(
+      userId,
+      page ? Number(page) : 1,
+      limit ? Number(limit) : 50,
+    );
   }
 
-  // UPDATE statement by ID + email
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Query('userId') userId: string,
-    @Body() dto: Partial<CreateUserStatementDto>,
+  // Update a statement for a user
+  @Patch(':userId/statements/:statementId')
+  async updateStatement(
+    @Param('userId') userId: string,
+    @Param('statementId') statementId: string,
+    @Body() updateDto: Partial<CreateUserStatementDto>,
   ) {
-    return this.statementService.updateStatement(id, userId, dto);
+    return this.userService.updateStatement(statementId, userId, updateDto);
   }
 }
