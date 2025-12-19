@@ -135,22 +135,34 @@ export class UserService {
     userId: string,
     page = 1,
     limit = 50,
-  ): Promise<UserStatement[]> {
+  ): Promise<{
+    statements: UserStatement[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
     if (!userId || !Types.ObjectId.isValid(userId)) {
       throw new BadRequestException('Invalid userId');
     }
 
     const skip = (page - 1) * limit;
 
-    return this.statementModel
+    // Fetch total count for pagination info
+    const total = await this.statementModel.countDocuments({
+      userId: new Types.ObjectId(userId),
+    });
+
+    // Fetch paginated statements
+    const statements = await this.statementModel
       .find({ userId: new Types.ObjectId(userId) })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 }) // newest first
       .skip(skip)
       .limit(limit)
-      .lean() // memory efficient
+      .lean() // return plain JS objects → much lighter in memory
       .exec();
-  }
 
+    return { statements, total, page, limit };
+  }
   // Update a statement, only if it belongs to the user
   async updateStatement(
     statementId: string,

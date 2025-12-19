@@ -56,15 +56,18 @@ export class UserController {
 
   // Get all statements for a user (optional pagination)
   @Get(':userId/statements')
-  async getStatements(
+  async getByUserId(
     @Param('userId') userId: string,
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
+    @Query('page') page: string,
+    @Query('limit') limit: string,
   ) {
+    const pageNumber = page ? parseInt(page, 10) : 1;
+    const limitNumber = limit ? parseInt(limit, 10) : 50;
+
     return this.userService.getStatementsByUserId(
       userId,
-      page ? Number(page) : 1,
-      limit ? Number(limit) : 50,
+      pageNumber,
+      limitNumber,
     );
   }
 
