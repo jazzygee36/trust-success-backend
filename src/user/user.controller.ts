@@ -14,14 +14,10 @@ import { User } from './schemas/user.schema';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserStatementDto } from './dto/create-user-statement.dto';
-import { UpdateUserStatementDto } from './dto/update-user-statement.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly statementService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post('/register')
   createUser(@Body(ValidationPipe) createUserDto: CreateUserDto) {
@@ -54,7 +50,6 @@ export class UserController {
     return this.userService.createStatement(userId, dto);
   }
 
-  // Get all statements for a user (optional pagination)
   @Get(':userId/statements')
   async getByUserId(
     @Param('userId') userId: string,
@@ -71,7 +66,6 @@ export class UserController {
     );
   }
 
-  // Update a statement for a user
   @Patch(':userId/statements/:statementId')
   async updateStatement(
     @Param('userId') userId: string,
