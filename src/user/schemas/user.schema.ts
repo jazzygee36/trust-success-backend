@@ -82,5 +82,4 @@ export class User extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId })
   somePropertyName?: MongooseSchema.Types.ObjectId;
 }
-
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,18 +1,28 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserStatementDto } from './dto/create-user-statement.dto';
+import { UpdateUserStatementDto } from './dto/update-user-statement.dto';
+import { UserStatement } from './schemas/statement';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+
+    @InjectModel(UserStatement.name)
+    private readonly statementModel: Model<UserStatement>,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<{ message: string }> {
     const existingUser = await this.userModel.findOne({
@@ -97,5 +107,57 @@ export class UserService {
 
   async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
+  }
+
+  async createStatement(
+    userId: string,
+    createDto: CreateUserStatementDto,
+  ): Promise<{ message: string; statement: UserStatement }> {
+    if (!userId || !Types.ObjectId.isValid(userId)) {
+      throw new BadRequestException('Invalid userId');
+    }
+
+    const statement = new this.statementModel({
+      ...createDto,
+      userId: new Types.ObjectId(userId), // convert string to ObjectId
+    });
+
+    const savedStatement = await statement.save();
+
+    return {
+      message: 'Statement created successfully',
+      statement: savedStatement,
+    };
+  }
+
+  // GET all statements for a specific user
+  async getStatementsByUserId(userId: string): Promise<UserStatement[]> {
+    if (!userId || !Types.ObjectId.isValid(userId)) {
+      throw new BadRequestException('Invalid userId');
+    }
+
+    return this.statementModel
+      .find({ userId: new Types.ObjectId(userId) }) // convert string to ObjectId
+      .sort({ createdAt: -1 })
+      .exec();
+  }
+
+  // UPDATE a statement (only if it belongs to the user)
+  async updateStatement(
+    id: string,
+    userId: string,
+    updateDto: Partial<CreateUserStatementDto>,
+  ): Promise<UserStatement> {
+    const statement = await this.statementModel.findOneAndUpdate(
+      { _id: id, userId },
+      updateDto,
+      { new: true },
+    );
+
+    if (!statement) {
+      throw new NotFoundException('Statement not found for this user');
+    }
+
+    return statement;
   }
 }
