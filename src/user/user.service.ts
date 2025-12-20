@@ -164,6 +164,23 @@ export class UserService {
     return { statements, total, page, limit };
   }
   // Update a statement, only if it belongs to the user
+
+  async deleteStatement(statementId: string): Promise<{ message: string }> {
+    if (!statementId || !Types.ObjectId.isValid(statementId)) {
+      throw new BadRequestException('Invalid statementId');
+    }
+
+    const deleted = await this.statementModel.findByIdAndDelete(statementId);
+
+    if (!deleted) {
+      throw new NotFoundException('Statement not found');
+    }
+
+    return {
+      message: 'Statement deleted successfully',
+    };
+  }
+
   async updateStatement(
     statementId: string,
     userId: string,

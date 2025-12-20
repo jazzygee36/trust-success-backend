@@ -23,8 +23,8 @@ export class UserStatement extends Document {
   @Prop({ required: true })
   beneficiary: string;
 
-  @Prop({ required: true })
-  dob: Date;
+  @Prop({ required: false })
+  dob?: Date;
 
   @Prop()
   receipt?: string;
@@ -38,8 +38,8 @@ export class UserStatement extends Document {
   @Prop({ enum: StatementStatus, default: StatementStatus.Pending })
   status: StatementStatus;
 
-  @Prop({ enum: StatementType, required: true })
-  type: StatementType;
+  @Prop({ enum: StatementType })
+  type?: StatementType;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
@@ -49,5 +49,4 @@ export class UserStatement extends Document {
   })
   userId: MongooseSchema.Types.ObjectId;
 }
-
 export const UserStatementSchema = SchemaFactory.createForClass(UserStatement);

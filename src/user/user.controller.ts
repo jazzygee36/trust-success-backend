@@ -7,6 +7,7 @@ import {
   Patch,
   Param,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -64,6 +65,11 @@ export class UserController {
       pageNumber,
       limitNumber,
     );
+  }
+
+  @Delete('delete-statement/:statementId')
+  async deleteStatement(@Param('statementId') statementId: string) {
+    return this.userService.deleteStatement(statementId);
   }
 
   @Patch(':userId/statements/:statementId')
