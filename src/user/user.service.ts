@@ -60,7 +60,15 @@ export class UserService {
     return { message: 'Successfully registered' };
   }
 
-  async login(loginDto: LoginUserDto): Promise<{ message: string }> {
+  async login(loginDto: LoginUserDto): Promise<{
+    message: string;
+    userId: string;
+    acctNumber: string;
+    acctType: string;
+    isActive: string;
+    username: string;
+    email: string;
+  }> {
     const user = await this.userModel.findOne({ email: loginDto.email });
 
     if (!user) {
@@ -73,12 +81,20 @@ export class UserService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    if (user.isActive != 'Active') {
-      throw new UnauthorizedException('Account Not Active!!! Contact Support');
+    if (user.isActive !== 'active') {
+      throw new UnauthorizedException('Account Not Active!!! Contact Support');
     }
 
-    // Here you can generate and return a JWT or a session if needed
-    return { message: 'Login successful' };
+    // Return message and userId
+    return {
+      message: 'Login successful',
+      userId: user._id.toString(),
+      acctNumber: user.acctNumber,
+      acctType: user.acctType,
+      isActive: user.isActive,
+      username: user.username,
+      email: user.email,
+    };
   }
 
   async updateUser(
