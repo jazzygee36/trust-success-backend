@@ -71,6 +71,7 @@ export class UserService {
     DWTC: string;
     tac: string;
     txc: string;
+    currentBallance: string;
   }> {
     const user = await this.userModel.findOne({ email: loginDto.email });
 
@@ -100,6 +101,7 @@ export class UserService {
       tac: user.tacCode,
       DWTC: user.dwtcCode,
       txc: user.txcCode,
+      currentBallance: user.currentBallance,
     };
   }
 
