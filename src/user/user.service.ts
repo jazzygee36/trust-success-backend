@@ -68,6 +68,9 @@ export class UserService {
     isActive: string;
     username: string;
     email: string;
+    DWTC: string;
+    tac: string;
+    txc: string;
   }> {
     const user = await this.userModel.findOne({ email: loginDto.email });
 
@@ -94,6 +97,9 @@ export class UserService {
       isActive: user.isActive,
       username: user.username,
       email: user.email,
+      tac: user.tacCode,
+      DWTC: user.dwtcCode,
+      txc: user.txcCode,
     };
   }
 
